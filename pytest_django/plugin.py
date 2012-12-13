@@ -4,6 +4,8 @@ This plugin handles creating and destroying the test environment and
 test database and provides some useful text fixtues.
 """
 
+from __future__ import absolute_import
+
 import os
 
 import pytest
@@ -70,8 +72,10 @@ def pytest_configure(config):
         from django.conf import settings
         try:
             settings.DATABASES
-        except ImportError, e:
-            raise pytest.UsageError(*e.args)
+        except ImportError:
+            import sys
+            exc = sys.exc_info()[1]
+            raise pytest.UsageError(*exc.args)
 
     # Register the marks
     config.addinivalue_line(

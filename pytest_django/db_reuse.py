@@ -4,7 +4,6 @@ The code in this module is heavily inspired by django-nose:
 https://github.com/jbalogh/django-nose/
 """
 
-import new
 import py
 
 
@@ -47,8 +46,9 @@ def create_test_db(self, verbosity=1, autoclobber=False):
         test_db_repr = ''
         if verbosity >= 2:
             test_db_repr = " ('%s')" % test_database_name
-        print "Re-using existing test database for alias '%s'%s..." % (
-            self.connection.alias, test_db_repr)
+        py.builtin.print_(
+            "Re-using existing test database for alias '%s'%s..." % (
+            self.connection.alias, test_db_repr))
 
     self.connection.features.confirm()
 
@@ -66,5 +66,5 @@ def monkey_patch_creation_for_db_reuse():
             # Make sure our monkey patch is still valid in the future
             assert hasattr(creation, 'create_test_db')
 
-            creation.create_test_db = new.instancemethod(
-                    create_test_db, creation, creation.__class__)
+            creation.create_test_db = create_test_db.__get__(
+                creation, creation.__class__)

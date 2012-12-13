@@ -1,4 +1,5 @@
 import pytest
+import py
 from django.conf import settings
 
 try:
@@ -29,4 +30,4 @@ def test_urls():
 @pytest.mark.urls('tests.urls_overridden')
 def test_urls_client(client):
     response = client.get('/overridden_url/')
-    assert response.content == 'Overridden urlconf works!'
+    assert py.builtin._totext(response.content) == 'Overridden urlconf works!'

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import py
 
 from django.conf import settings
@@ -17,9 +19,11 @@ def test_db_reuse(django_testdir):
         py.test.skip('Do not test db reuse since database does not support it')
 
     create_test_module(django_testdir, '''
+from __future__ import absolute_import
+
 import pytest
 
-from app.models import Item
+from .app.models import Item
 
 @pytest.mark.django_db
 def test_db_can_be_accessed():
@@ -58,45 +62,3 @@ def test_db_can_be_accessed():
 
     # Make sure the database has been re-created and the mark is gone
     assert not mark_exists()
-
-
-# def test_conftest_connection_caching(django_testdir, monkeypatch):
-#     """
-#     Make sure django.db.connections is properly cleared before a @django_db
-#     test, when a connection to the actual database has been constructed.
-
-#     """
-#     tpkg_path = setup_test_environ(django_testdir, monkeypatch, '''
-# import pytest
-
-# from django.test import TestCase
-# from django.conf import settings
-
-# from app.models import Item
-
-# def test_a():
-#     # assert settings.DATABASES['default']['NAME'] == 'test_pytest_django_db_testasdf'
-#     Item.objects.count()
-
-# @pytest.mark.django_db
-# def test_b():
-#     assert settings.DATABASES['default']['NAME'] == 'test_pytest_django_db_test'
-#     Item.objects.count()
-
-# ''')
-
-#     tpkg_path.join('conftest.py').write('''
-# # from app.models import Item
-# # Item.objects.count()
-# # from django.db import models
-# from django.db import connection
-# cursor = connection.cursor()
-# cursor.execute('SELECT 1')
-
-
-# ''')
-    # result = django_testdir.runpytest('-v')
-    # result.stdout.fnmatch_lines([
-    #     "*test_b PASSED*",
-    #     "*test_a PASSED*",
-    # ])

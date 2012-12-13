@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 import pytest
+import py
 
 from django.test import TestCase
-from app.models import Item
+from .app.models import Item
 
 
 from .conftest import create_test_module
@@ -65,8 +67,9 @@ class TestUrls(TestCase):
     urls = 'tests.urls_unittest'
 
     def test_urls(self):
-        self.assertEqual(self.client.get('/test_url/').content,
-                         'Test URL works!')
+        self.assertEqual(
+            py.builtin._totext(self.client.get('/test_url/').content),
+            'Test URL works!')
 
 
 def test_sole_test(django_testdir):
@@ -76,10 +79,11 @@ def test_sole_test(django_testdir):
     """
 
     create_test_module(django_testdir, '''
+from __future__ import absolute_import
 from django.test import TestCase
 from django.conf import settings
 
-from app.models import Item
+from .app.models import Item
 
 class TestFoo(TestCase):
     def test_foo(self):

@@ -1,8 +1,11 @@
+from __future__ import absolute_import
+
 import pytest
 import py
 
 import shutil
 import copy
+import sys
 
 
 pytest_plugins = 'pytester'
@@ -41,6 +44,7 @@ DATABASES = %(db_settings)s
 INSTALLED_APPS = [
     'tpkg.app',
 ]
+SECRET_KEY = 'foobar'
 
 ''' % {'db_settings': repr(db_settings)}
 
@@ -48,7 +52,10 @@ INSTALLED_APPS = [
     app_source = TESTS_DIR.dirpath('app')
 
     # Copy the test app to make it available in the new test run
-    shutil.copytree(unicode(app_source), unicode(tpkg_path.join('app')))
+    src = py.builtin._totext(app_source)
+    dst = py.builtin._totext(tpkg_path.join('app'))
+    shutil.copytree(src, dst)
+
     tpkg_path.join("db_test_settings.py").write(test_settings)
 
     monkeypatch.setenv('DJANGO_SETTINGS_MODULE', 'tpkg.db_test_settings')
